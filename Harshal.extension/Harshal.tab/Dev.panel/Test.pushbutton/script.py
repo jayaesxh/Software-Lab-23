@@ -1,127 +1,74 @@
 # -*- coding: utf-8 -*-
-__title__   = "05 - Create Library of Elements"
-__doc__ = """Date    = 22.10.2022
-_____________________________________________________________________
-Description:
-Script from a video Tutorial for my Ko-Fi and Patreon supporters.
-_____________________________________________________________________
-Author:  Erik Frits"""
-__context__ = 'active-floor-plan'
+__title__ = "03 - GroupName to Elements"
+__doc__ = """This script is from Dev Diary video that I 
+posted on Patreon. I will show you how to :
+- Get Groups
+- Get Elements in Groups
+- Get Group Name
+- Write Groupname to one of parameters.
 
+You can support my channel on:
+www.patreon.com/ErikFrits"""
 # ╦╔╦╗╔═╗╔═╗╦═╗╔╦╗╔═╗
 # ║║║║╠═╝║ ║╠╦╝ ║ ╚═╗
-# ╩╩ ╩╩  ╚═╝╩╚═ ╩ ╚═╝
-#====================================================================================================
+# ╩╩ ╩╩  ╚═╝╩╚═ ╩ ╚═╝ IMPORTS
+# ==================================================
+# Regular + Autodesk
 from Autodesk.Revit.DB import *
 
 # ╦  ╦╔═╗╦═╗╦╔═╗╔╗ ╦  ╔═╗╔═╗
 # ╚╗╔╝╠═╣╠╦╝║╠═╣╠╩╗║  ║╣ ╚═╗
-#  ╚╝ ╩ ╩╩╚═╩╩ ╩╚═╝╩═╝╚═╝╚═╝
-#====================================================================================================
-doc      = __revit__.ActiveUIDocument.Document
-uidoc    = __revit__.ActiveUIDocument
-app      = __revit__.Application
+#  ╚╝ ╩ ╩╩╚═╩╩ ╩╚═╝╩═╝╚═╝╚═╝ VARIABLES
+# ==================================================
+doc     = __revit__.ActiveUIDocument.Document
+uidoc   = __revit__.ActiveUIDocument
+app     = __revit__.Application
 
-active_view  = doc.ActiveView
-active_level = doc.ActiveView.GenLevel
-
-# ╔═╗╦ ╦╔╗╔╔═╗╔╦╗╦╔═╗╔╗╔╔═╗
-# ╠╣ ║ ║║║║║   ║ ║║ ║║║║╚═╗
-# ╚  ╚═╝╝╚╝╚═╝ ╩ ╩╚═╝╝╚╝╚═╝
-#====================================================================================================
-def create_text(origin, text_type):
-    """Function to create TextNote at the given location.
-    TextType Name is going to be used as a Text."""
-    text         = text_type.get_Parameter(BuiltInParameter.ALL_MODEL_TYPE_NAME).AsString()
-
-    # CREATE TEXT NOTE
-    txt = TextNote.Create(doc, active_view.Id, origin, text, text_type.Id)
-    return txt
-
-def create_wall(origin, wall_type):
-    """Function to create a Wall at the given location."""
-    pt_start = origin
-    pt_end   = XYZ(origin.X + 2, origin.Y, origin.Z)
-    curve    = Line.CreateBound(pt_start, pt_end)
-
-    H = 10
-    O = 0
-    flip  = False
-    struc = False
-
-    wall = Wall.Create(doc, curve, wall_type.Id, active_level.Id, H, O, flip, struc)
-    return wall
-
-
-def create_floor(origin, floor_type):
-    """Function to create a Floor at the given location."""
-    # POINTS
-    pt_0 = origin
-    pt_1 = XYZ(origin.X+1 , origin.Y   , origin.Z)
-    pt_2 = XYZ(origin.X+1 , origin.Y+1 , origin.Z)
-    pt_3 = XYZ(origin.X   , origin.Y+1 , origin.Z)
-
-    # LINES
-    l_0 = Line.CreateBound(pt_0, pt_1)
-    l_1 = Line.CreateBound(pt_1, pt_2)
-    l_2 = Line.CreateBound(pt_2, pt_3)
-    l_3 = Line.CreateBound(pt_3, pt_0)
-
-    # BOUNDARY
-    boundary = CurveArray()
-    boundary.Append(l_0)
-    boundary.Append(l_1)
-    boundary.Append(l_2)
-    boundary.Append(l_3)
-
-    # CREATE FLOOR
-    new_floor = doc.Create.NewFloor(boundary, floor_type, active_level, False)
-    return new_floor
+OUTPUT_PARAM = 'GroupName'
+CATEGORIES = ['Walls', 'Floors', 'Doors']
 
 # ╔╦╗╔═╗╦╔╗╔
 # ║║║╠═╣║║║║
-# ╩ ╩╩ ╩╩╝╚╝
-#====================================================================================================
-# Get Types
-all_walls_types  = FilteredElementCollector(doc).OfClass(WallType).ToElements()
-all_floors_types = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Floors).OfClass(FloorType).ToElements()
-all_text_types   = FilteredElementCollector(doc).OfClass(TextNoteType).ToElements()
+# ╩ ╩╩ ╩╩╝╚╝ MAIN
+# ==================================================
 
-#🔵 ORIGIN
-X = 0
-Y = 0
-Z = 0
+# GET ALL GROUPS + FILTER
+all_groups     = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_IOSModelGroups).WhereElementIsNotElementType().ToElements()
+all_whg_groups = [g for g in all_groups if 'WHG' in g.Name] # List Comprehension to filter Apartment groups.
 
+with Transaction(doc, __doc__) as t:
+    t.Start()
 
-#🔓 Transaction - Start
-t = Transaction(doc, __title__)
-t.Start()
+    # CLEAN PARAMETERS
+    all_walls = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Walls).WhereElementIsNotElementType().ToElements()
+    all_floors = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Floors).WhereElementIsNotElementType().ToElements()
+    all_doors = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Doors).WhereElementIsNotElementType().ToElements()
+    clean_elements = list(all_walls) + list(all_floors) + list(all_doors)
 
-
-#✅ Create TextTypes
-for txt_type in all_text_types:
-    origin = XYZ(X,Y,Z)
-    create_text(origin, txt_type)
-    Y -= 2
-
-X += 15
-Y = 0
-
-#✅ Create WallType
-for wall_type in all_walls_types:
-    origin = XYZ(X,Y,Z)
-    create_wall(origin, wall_type)
-    Y -= 2
-
-X += 15
-Y = 0
-
-#✅ Create FloorType
-for floor_type in all_floors_types:
-    origin = XYZ(X,Y,Z)
-    create_floor(origin, floor_type)
-    Y -= 2
+    for el in clean_elements:
+        el_param = el.LookupParameter(OUTPUT_PARAM)
+        el_param.Set('')
 
 
-#🔒 Transaction - Commit
-t.Commit()
+
+    for g in all_whg_groups:
+        # GET GROUP MEMBERS
+        member_ids = g.GetMemberIds()
+        members    = [doc.GetElement(id) for id in member_ids]
+
+        # FILTER MEMBERS CATEGORIES
+        for el in members:
+            try:
+                if el.Category.Name not in CATEGORIES:
+                    continue
+            except:
+                continue
+
+            # SET GROUP NAME
+            el_param = el.LookupParameter(OUTPUT_PARAM)
+            el_param.Set(g.Name)
+
+        # break
+
+    t.Commit()
+
