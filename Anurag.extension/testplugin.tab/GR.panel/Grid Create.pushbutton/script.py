@@ -34,78 +34,42 @@ app     =__revit__.Application
 # ╩ ╩╩ ╩╩╝╚╝
 
 # FECs
+# Get wall
+# GET ALL WALLS
+all_walls = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Walls).WhereElementIsNotElementType().ToElementIds()
 
-def get_wall_elements(document):
-    wall_collector = FilteredElementCollector(document).OfCategory(BuiltInCategory.OST_Walls)
-    wall_elements = list(wall_collector)
-    return wall_elements
+for element_id in all_walls:
+    Wall = doc.GetElement(element_id)
 
+    wep0 = Wall.Location.Curve.GetEndPoint(0)
+    wep1 = Wall.Location.Curve.GetEndPoint(1)
+    print('Wall End Pt 0 (for Wall ID - {}): {}'.format(element_id, wep0))
+    print('Wall End Pt 1 (for Wall ID - {}): {}'.format(element_id, wep1))
+    print('*' * 100)
 
-def create_grids_from_wall(document, wall, grid_length):
-    # Start a transaction
-    transaction = Transaction(document, "Create Grids from Wall")
-    transaction.Start()
+    start = XYZ(wep0[0], wep0[1], 0)
+    end = XYZ(wep1[0], wep1[1], 0)
 
-    try:
-        created_grids = []
+    print(start)
+    print(end)
 
-        # Get the bounding box of the wall
-        bounding_box = wall.get_BoundingBox(None)
+    t = Transaction(doc, 'Create Grid')
+    t.Start()
 
-        # Check if the bounding box is valid
-        if bounding_box:
-            min_point = bounding_box.Min
-            max_point = bounding_box.Max
+    # Create the geometry line which the grid locates
 
-            # Calculate the desired end point for the grids based on the grid length
-            grid_end_point = XYZ(min_point.X + grid_length, min_point.Y, min_point.Z)
+    geomLine = Line.CreateBound(start, end)
 
-            # Create the grid lines based on the bounding box points and the desired end point
-            horizontal_line = Line.CreateBound(XYZ(min_point.X, min_point.Y, min_point.Z), grid_end_point)
-            vertical_line = Line.CreateBound(XYZ(max_point.X, min_point.Y, min_point.Z),
-                                             XYZ(max_point.X, max_point.Y, max_point.Z))
+    # Create a grid using the geometry line
+    lineGrid = Grid.Create(doc, geomLine)
+    if lineGrid is None:
+        raise Exception("Create a new straight grid failed.")
 
-            # Get the wall's orientation
-            wall_direction = wall.Orientation
+    # Modify the name of the created grid
+    #lineGrid.Name = "A"
 
-            # Rotate the grid lines to align with the wall's orientation
-            horizontal_line = Line.CreateBound(horizontal_line.GetEndPoint(0),
-                                               horizontal_line.GetEndPoint(0) + wall_direction)
-            vertical_line = Line.CreateBound(vertical_line.GetEndPoint(0),
-                                             vertical_line.GetEndPoint(0) + wall_direction)
-
-            # Creating horizontal grid
-            horizontal_grid = Grid.Create(document, horizontal_line)
-            created_grids.append(horizontal_grid)
-
-            # Creating vertical grid
-            vertical_grid = Grid.Create(document, vertical_line)
-            created_grids.append(vertical_grid)
-
-        # Commit the transaction
-        transaction.Commit()
-        print("Transaction committed successfully.")
-
-        return created_grids
-    except Exception as e:
-        # Rollback the transaction in case of an error
-        transaction.RollBack()
-        print("Transaction failed. Rolled back.")
-        print("Error:", str(e))
-
-
-# Active Revit document
-active_doc = __revit__.ActiveUIDocument.Document
-
-wall_elements = get_wall_elements(active_doc)
-
-# Set the desired grid length
-grid_length = 10.0
-
-# Create grids for each wall element
-for wall in wall_elements:
-    created_grids = create_grids_from_wall(active_doc, wall, grid_length)
-
+    t.Commit()
+    print("Created Grid Successfully")
 
 
 
