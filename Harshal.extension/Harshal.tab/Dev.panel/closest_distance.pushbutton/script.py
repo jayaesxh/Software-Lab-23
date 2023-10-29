@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-__title__ = "TEST"
+__title__ = "Automated Parameter Creation"
 __doc__ = """______"""
 
 # IMPORTS
