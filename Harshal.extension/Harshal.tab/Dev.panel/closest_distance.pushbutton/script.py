@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-__title__ = "Automated Parameter Creation"
+__title__ = "TEST"
 __doc__ = """______"""
 
 # IMPORTS
@@ -155,17 +155,34 @@ def extract_element_ids(element_ids):
 
     return element_ids_int
 
+def extract_element_ids_from_dict(input_dict):
+    extracted_dict = {}
+
+    for key, value in input_dict.items():
+        # Extract numeric values from key
+        extracted_key = int(re.search(r'\d+', str(key)).group()) if re.search(r'\d+', str(key)) else None
+
+        # Extract numeric values from value
+        extracted_value = int(re.search(r'\d+', str(value)).group()) if re.search(r'\d+', str(value)) else None
+
+        # Update the dictionary with extracted key-value pair
+        if extracted_key is not None and extracted_value is not None:
+            extracted_dict[extracted_key] = extracted_value
+
 
 # MAIN
 # ==================================================
 
 
 # Specify the path to JSON file containing dictionary A {wall1: grid1, wall2: grid2, wall3: grid2, wall4: grid3}
-json_file_path = r'C:\Users\harsh\OneDrive\Documents\newew\file1.json'
+file_path_dictA = r'C:\Users\harsh\OneDrive\Documents\newew\dictA.json'
 
 # Open the JSON file and load its contents into a dictionary
-with open(json_file_path, 'r') as file:
+with open(file_path_dictA, 'r') as file:
     dictA = json.load(file)
+
+print(dictA)
+print("Type dictA: ", type(dictA))
 
 wall_element_ids = []
 
@@ -179,14 +196,55 @@ for element_id in all_walls:
     Wall = doc.GetElement(element_id)
     # print('Wall Element ID- {}'.format(element_id))
     wall_element_ids.append(element_id)
-print(wall_element_ids)
-print('*' * 50)
+# print(wall_element_ids)
+# print('*' * 50)
 
-wall_element_ids_int = extract_element_ids(wall_element_ids)
-print(wall_element_ids_int)
+wall_element_ids = []
+min_distances = []
 
-number_of_parameters = len(wall_element_ids)
 
+for key, value in dictA.items():
+    print("Key: {}, Value: {}".format(key, value))
+
+    wall = doc.GetElement(ElementId(int(key)))
+    grid = doc.GetElement(ElementId(int(value)))
+    print(wall)
+    print('*' * 20)
+    print(grid)
+    print('*' * 20)
+    print('*' * 100)
+
+    Wall_x = wall.Location.Curve.Origin.X
+    Wall_y = wall.Location.Curve.Origin.Y
+    Wall_orientation = abs(wall.Location.Curve.Direction.Y)
+
+    # Get coordinates of grid (which are parallel to wall)
+    Grid_x = grid.Curve.Origin.X
+    Grid_y = grid.Curve.Origin.Y
+
+    # Calculate distance between wall and grid
+    if Wall_orientation == 1:  # Horizontal wall
+        Wall_mm_value = feet_to_mm(Wall_x)
+        Grid_mm_value = feet_to_mm(Grid_x)
+    else:  # Vertical wall
+        Wall_mm_value = feet_to_mm(Wall_y)
+        Grid_mm_value = feet_to_mm(Grid_y)
+
+    distance = calculate_distance(Wall_mm_value, Grid_mm_value)
+    print('Distance between Wall {} and Grid {}: {}'.format(int(key), int(value), distance))
+
+    wall_element_ids.append(int(key))
+    min_distances.append(distance)
+
+# Creating the dictionary using a loop
+min_distance_dict = {}
+for i in range(len(wall_element_ids)):
+    element_id = wall_element_ids[i]
+    min_distance = min_distances[i]
+    min_distance_dict[element_id] = min_distance
+
+# Printing the created dictionary
+print(min_distance_dict)
 
 def create_new_global_parameter(document, name, value):
     if not GlobalParametersManager.AreGlobalParametersAllowed(document):
@@ -207,10 +265,15 @@ def create_new_global_parameter(document, name, value):
         trans.Commit()
     return gpid
 
+def mm_to_feet(mm):
+    # 1 millimeter is equal to 0.00328084 feet
+    feet = mm * 0.00328084
+    return feet
 
-for i in range(number_of_parameters):
-    parameter_name = 'Distance_Parameter_{}'.format(i + 1)
-    parameter_value = 0.0
+for x,y in min_distance_dict.items():
+
+    parameter_name = 'Wall-Grid_Distance_(Wall_EID_{})'.format(x)
+    parameter_value = mm_to_feet(y)
 
     # Call the function to create the new global parameter
     global_parameter_id = create_new_global_parameter(doc, parameter_name, parameter_value)
@@ -229,12 +292,19 @@ for p_id in all_global_parameter_ids:
 parameter_id_int = extract_element_ids(parameter_id)
 print(parameter_id_int)
 
+wall_element_ids = list(dictA.keys())
+print("wall_element_ids", wall_element_ids)
+
+
 dictB = {}
-for k, v in zip(wall_element_ids_int, parameter_id_int):
+for k, v in zip(wall_element_ids, parameter_id_int):
     dictB[k] = v
 print(dictB)
 
-with open(r'C:\Users\harsh\OneDrive\Documents\newew\dictB.json', 'w') as fp:        #insert file path here
+
+file_path_dictB = r'C:\Users\harsh\OneDrive\Documents\newew\dictB.json'
+
+with open(file_path_dictB, 'w') as fp:        #insert file path here
     json.dump(dictB, fp, indent=4)
 
 print("JSON file created successfully.")
