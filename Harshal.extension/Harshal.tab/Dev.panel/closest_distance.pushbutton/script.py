@@ -301,10 +301,12 @@ for k, v in zip(wall_element_ids, parameter_id_int):
     dictB[k] = v
 print(dictB)
 
+# Convert both keys and values to strings in the dictionary
+dictB_str = {str(key): str(value) for key, value in dictB.items()}
 
 file_path_dictB = r'C:\Users\harsh\OneDrive\Documents\newew\dictB.json'
 
 with open(file_path_dictB, 'w') as fp:        #insert file path here
-    json.dump(dictB, fp, indent=4)
+    json.dump(dictB_str, fp, indent=4)
 
 print("JSON file created successfully.")
