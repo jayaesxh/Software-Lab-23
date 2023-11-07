@@ -79,7 +79,7 @@ for wall_id, grid_id in dictA.items():
 
     Grid = doc.GetElement(ElementId(int(grid_id)))
 
-    Grid_orientation = Grid.Curve.Direction.Y
+    Grid_orientation = Grid.Curve.Direction.Y # Grid not GridType.
     if Grid_orientation == -1:
         grid_o = "V"
         v_grids.append(grid_id)
