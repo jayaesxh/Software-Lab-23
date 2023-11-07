@@ -50,14 +50,26 @@ def create_new_dimension_along_line(document, line):
 # ║║║╠═╣║║║║
 # ╩ ╩╩ ╩╩╝╚╝ MAIN
 # ====================================================================================================
-all_walls = FilteredElementCollector(doc).OfCategory(
-    BuiltInCategory.OST_Walls).WhereElementIsNotElementType().ToElementIds()
-# print(all_walls)
-print('#' * 50)
 
-# GET ALL GRIDS
-all_grids = FilteredElementCollector(doc).OfCategory(
-    BuiltInCategory.OST_Grids).WhereElementIsNotElementType().ToElementIds()
+# Specify the path to JSON file containing dictionary A {wall1: grid1, wall2: grid2, wall3: grid2, wall4: grid3}
+file_path_dictA = r'insert file path here'  #example- r'C:\Users\harsh\OneDrive\Documents\newew\dictB.json'
+
+# Open the JSON file and load its contents into a dictionary
+with open(file_path_dictA, 'r') as file:
+    dictA = json.load(file)
+
+print(dictA)
+print("Type dictA: ", type(dictA))
+
+# Specify the path to JSON file containing dictionary A {wall1: grid1, wall2: grid2, wall3: grid2, wall4: grid3}
+file_path_dictB = r'insert file path here'
+
+# Open the JSON file and load its contents into a dictionary
+with open(file_path_dictB, 'r') as file:
+    dictB = json.load(file)
+
+print(dictB)
+print("Type dictA: ", type(dictB))
 
 # GRID SORTING
 
@@ -76,92 +88,85 @@ for element_id in all_grids:
         grid_o = "H"
         h_grids.append(element_id)
 
-
 # HORIZONTAL DIMENSIONS
 
-wall_data = {}
-for wall_id in all_walls:
-    Wall = doc.GetElement(wall_id)
+for wall_id, grid_id in dictA.items():
+    # Get Wall and Grid elements based on their IDs
+    Wall = doc.GetElement(ElementId(int(wall_id)))
+    Grid = doc.GetElement(ElementId(int(grid_id)))
+
     wep0 = Wall.Location.Curve.GetEndPoint(0)
     wep1 = Wall.Location.Curve.GetEndPoint(1)
     print('Wall End Pt 0 (for Wall ID - {}): {}'.format(wall_id, wep0))
     print('Wall End Pt 1 (for Wall ID - {}): {}'.format(wall_id, wep1))
     print('*' * 50)
 
-    # Create a tuple with wep0 and wep1 as values
-    wall_tuple = (wep0, wep1)
-
-    # Assign the tuple to the dictionary using wall_id as the key
-    wall_data[Wall] = wall_tuple
-# print('Wall Data Dictionary:')
-# print(wall_data)
-
-grid_data = {}
-for grid_id in all_grids:
-    Grid = doc.GetElement(grid_id)
     gep0 = Grid.Curve.GetEndPoint(0)
     gep1 = Grid.Curve.GetEndPoint(1)
     print('Grid End Pt 0 (for Grid ID - {}): {}'.format(grid_id, gep0))
     print('Grid End Pt 1 (for Grid ID - {}): {}'.format(grid_id, gep1))
     print('*' * 50)
-    grid_data[Grid] = gep1
-# print(grid_data)
 
-for Wall, wall_tuple in wall_data.items():
-    wep0, wep1 = wall_tuple
-    for Grid, gep1 in grid_data.items():
-        start = XYZ(wep0[0], wep0[1] - 5, 0)
-        end = XYZ(gep1[0], wep0[1] - 5, 0)
+    # Check if the orientations match
+    if Wall.Location.Curve.Direction.Y == -1 or Wall.Location.Curve.Direction.Y == 1 and Grid.Curve.Direction.Y == -1 or Grid.Curve.Direction.Y == 1:
+        # Both are vertical grids
+        v_grids.append(grid_id)
+    elif Wall.Location.Curve.Direction.Y != -1 or Wall.Location.Curve.Direction.Y != 1 and Grid.Curve.Direction.Y != -1 or Grid.Curve.Direction.Y != 1:
+        # Both are horizontal grids
+        h_grids.append(grid_id)
 
-        # Calculate the difference between start and end
-        difference = (end - start).GetLength()
+    # Create dimensions between Wall and Grid
+    start = XYZ(wep0[0], wep0[1] - 5, 0)
+    end = XYZ(gep1[0], wep0[1] - 5, 0)
 
-        # Check if the difference is greater than or equal to 0.01
-        if difference >= 0.01:
-            t = Transaction(doc, 'Create Dimension')
-            t.Start()
+    # Calculate the difference between start and end
+    difference = (end - start).GetLength()
+    print("Difference between Wall {} and Grid {} is {}.".format(wall_id, grid_id, difference))
 
-            lines = Line.CreateBound(start, end)
+    t = Transaction(doc, 'Create Dimension')
+    t.Start()
 
-            # CREATE REFERENCE ARRAY
-            refArray = ReferenceArray()
-            refArray.Append(Reference(Wall))
-            refArray.Append(Reference(Grid))
+    lines = Line.CreateBound(start, end)
 
-            # CREATE NEW DIMENSION
-            doc.Create.NewDimension(active_view, lines, refArray)
-            t.Commit()
-            print("Created Horizontal Dimension Successfully between Wall and Grid.")
-        else:
-            print("No Horizontal Dimension Created between Wall and Grid due to tolerance.")
+    # CREATE REFERENCE ARRAY
+    refArray = ReferenceArray()
+    refArray.Append(Reference(Wall))
+    refArray.Append(Reference(Grid))
 
-# VERTICAL DIMENSIONS
+    # CREATE NEW DIMENSION
+    doc.Create.NewDimension(active_view, lines, refArray)
+    t.Commit()
+    print("Created Horizontal Dimension Successfully between Wall {} and Grid {}.".format(wall_id, grid_id))
+else:
+    print("No Horizontal Dimension Created between Wall {} and Grid {} due to tolerance.".format(wall_id, grid_id))
 
-for Wall, wall_tuple in wall_data.items():
-    wep0, wep1 = wall_tuple
-    for Grid, gep1 in grid_data.items():
-        start = XYZ(wep0[0] - 5, wep0[1], 0)  # Vertical dimension starts from the wall's top endpoint
-        end = XYZ(wep0[0] - 5, gep1[1], 0)  # Vertical dimension ends at the grid's Y-coordinate
+# # VERTICAL DIMENSIONS
 
-        # Calculate the difference between start and end
-        difference = (end - start).GetLength()
+# for Wall, wall_tuple in wall_data.items():
+#     wep0, wep1 = wall_tuple
+#     for Grid, gep1 in grid_data.items():
+#         start = XYZ(wep0[0] - 5, wep0[1], 0)  # Vertical dimension starts from the wall's top endpoint
+#         end = XYZ(wep0[0] - 5, gep1[1], 0)  # Vertical dimension ends at the grid's Y-coordinate
 
-        # Check if the difference is greater than or equal to 0.01
-        if difference >= 0.01:
-            t = Transaction(doc, 'Create Vertical Dimension')
-            t.Start()
+#         # Calculate the difference between start and end
+#         difference = (end - start).GetLength()
 
-            lines = Line.CreateBound(start, end)
+#         # Check if the difference is greater than or equal to 0.01
+#         if difference >= 0.01:
+#             t = Transaction(doc, 'Create Vertical Dimension')
+#             t.Start()
 
-            # CREATE REFERENCE ARRAY
-            refArray = ReferenceArray()
-            refArray.Append(Reference(Wall))
-            refArray.Append(Reference(Grid))
+#             lines = Line.CreateBound(start, end)
 
-            # CREATE NEW DIMENSION
-            doc.Create.NewDimension(active_view, lines, refArray)
-            t.Commit()
-            print("Created Vertical Dimension Successfully between Wall and Grid.")
-        else:
-            print("No Vertical Dimension Created between Wall and Grid due to tolerance.")
+#             # CREATE REFERENCE ARRAY
+#             refArray = ReferenceArray()
+#             refArray.Append(Reference(Wall))
+#             refArray.Append(Reference(Grid))
+
+#             # CREATE NEW DIMENSION
+#             doc.Create.NewDimension(active_view, lines, refArray)
+#             t.Commit()
+#             print("Created Vertical Dimension Successfully between Wall and Grid.")
+#         else:
+#             print("No Vertical Dimension Created between Wall and Grid due to tolerance.")
 
