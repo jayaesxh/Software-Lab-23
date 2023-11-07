@@ -72,21 +72,21 @@ print(dictB)
 print("Type dictA: ", type(dictB))
 
 # GRID SORTING
-
 v_grids = []
 h_grids = []
-for element_id in all_grids:
+for wall_id, grid_id in dictA.items():
     # Perform operations on each element ID here
 
-    Grid = doc.GetElement(element_id)
+    Grid = doc.GetElement(ElementId(int(grid_id)))
 
     Grid_orientation = Grid.Curve.Direction.Y
     if Grid_orientation == -1:
         grid_o = "V"
-        v_grids.append(element_id)
+        v_grids.append(grid_id)
     elif Grid_orientation != -1:
         grid_o = "H"
-        h_grids.append(element_id)
+        h_grids.append(grid_id)
+
 
 # HORIZONTAL DIMENSIONS
 
