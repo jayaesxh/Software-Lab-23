@@ -13,6 +13,7 @@ from Autodesk.Revit.DB import Transaction, Line, XYZ
 from pyrevit import revit, DB
 # .NET IMPORTS
 import clr
+import json
 
 clr.AddReference('System')
 from System.Collections.Generic import List
@@ -52,7 +53,7 @@ def create_new_dimension_along_line(document, line):
 # ====================================================================================================
 
 # Specify the path to JSON file containing dictionary A {wall1: grid1, wall2: grid2, wall3: grid2, wall4: grid3}
-file_path_dictA = r'C:\Users\jayes\Desktop\Revit Extensions\dictA.json' 
+file_path_dictA = r'C:\Users\jayes\Desktop\Revit Extensions\dictA.json'
 
 # Open the JSON file and load its contents into a dictionary
 with open(file_path_dictA, 'r') as file:
@@ -77,9 +78,9 @@ h_grids = []
 for wall_id, grid_id in dictA.items():
     # Perform operations on each element ID here
 
-    Grid = doc.GetElement(ElementId(int(grid_id)))
+    grid = doc.GetElement(ElementId(int(grid_id)))
 
-    Grid_orientation = Grid.Curve.Direction.Y # Grid not GridType.
+    Grid_orientation = grid.Curve.Direction.Y
     if Grid_orientation == -1:
         grid_o = "V"
         v_grids.append(grid_id)
@@ -87,16 +88,15 @@ for wall_id, grid_id in dictA.items():
         grid_o = "H"
         h_grids.append(grid_id)
 
-
 # HORIZONTAL DIMENSIONS
 
 for wall_id, grid_id in dictA.items():
     # Get Wall and Grid elements based on their IDs
-    Wall = doc.GetElement(ElementId(int(wall_id)))
-    Grid = doc.GetElement(ElementId(int(grid_id)))
+    wall = doc.GetElement(ElementId(int(wall_id)))
+    grid = doc.GetElement(ElementId(int(grid_id)))
 
-    wep0 = Wall.Location.Curve.GetEndPoint(0)
-    wep1 = Wall.Location.Curve.GetEndPoint(1)
+    wep0 = wall.Location.Curve.GetEndPoint(0)
+    wep1 = wall.Location.Curve.GetEndPoint(1)
     print('Wall End Pt 0 (for Wall ID - {}): {}'.format(wall_id, wep0))
     print('Wall End Pt 1 (for Wall ID - {}): {}'.format(wall_id, wep1))
     print('*' * 50)
@@ -108,10 +108,10 @@ for wall_id, grid_id in dictA.items():
     print('*' * 50)
 
     # Check if the orientations match
-    if Wall.Location.Curve.Direction.Y == -1 or Wall.Location.Curve.Direction.Y == 1 and Grid.Curve.Direction.Y == -1 or Grid.Curve.Direction.Y == 1:
+    if wall.Location.Curve.Direction.Y == -1 or wall.Location.Curve.Direction.Y == 1 and grid.Curve.Direction.Y == -1 or grid.Curve.Direction.Y == 1:
         # Both are vertical grids
         v_grids.append(grid_id)
-    elif Wall.Location.Curve.Direction.Y != -1 or Wall.Location.Curve.Direction.Y != 1 and Grid.Curve.Direction.Y != -1 or Grid.Curve.Direction.Y != 1:
+    elif wall.Location.Curve.Direction.Y != -1 or wall.Location.Curve.Direction.Y != 1 and grid.Curve.Direction.Y != -1 or grid.Curve.Direction.Y != 1:
         # Both are horizontal grids
         h_grids.append(grid_id)
 
@@ -121,7 +121,7 @@ for wall_id, grid_id in dictA.items():
 
     # Calculate the difference between start and end
     difference = (end - start).GetLength()
-    print("Difference between Wall {} and Grid {} is {}.".format(wall_id, grid_id, difference))
+    print("Difference between wall {} and grid {} is {}.".format(wall_id, grid_id, difference))
 
     t = Transaction(doc, 'Create Dimension')
     t.Start()
@@ -130,15 +130,15 @@ for wall_id, grid_id in dictA.items():
 
     # CREATE REFERENCE ARRAY
     refArray = ReferenceArray()
-    refArray.Append(Reference(Wall))
-    refArray.Append(Reference(Grid))
+    refArray.Append(Reference(wall))
+    refArray.Append(Reference(grid))
 
     # CREATE NEW DIMENSION
     doc.Create.NewDimension(active_view, lines, refArray)
     t.Commit()
-    print("Created Horizontal Dimension Successfully between Wall {} and Grid {}.".format(wall_id, grid_id))
+    print("Created Horizontal Dimension Successfully between wall {} and grid {}.".format(wall_id, grid_id))
 else:
-    print("No Horizontal Dimension Created between Wall {} and Grid {} due to tolerance.".format(wall_id, grid_id))
+    print("No Horizontal Dimension Created between wall {} and grid {} due to tolerance.".format(wall_id, grid_id))
 
 # # VERTICAL DIMENSIONS
 
@@ -169,4 +169,3 @@ else:
 #             print("Created Vertical Dimension Successfully between Wall and Grid.")
 #         else:
 #             print("No Vertical Dimension Created between Wall and Grid due to tolerance.")
-
