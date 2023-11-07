@@ -52,7 +52,7 @@ def create_new_dimension_along_line(document, line):
 # ====================================================================================================
 
 # Specify the path to JSON file containing dictionary A {wall1: grid1, wall2: grid2, wall3: grid2, wall4: grid3}
-file_path_dictA = r'insert file path here'  #example- r'C:\Users\harsh\OneDrive\Documents\newew\dictB.json'
+file_path_dictA = r'C:\Users\jayes\Desktop\Revit Extensions\dictA.json' 
 
 # Open the JSON file and load its contents into a dictionary
 with open(file_path_dictA, 'r') as file:
@@ -62,7 +62,7 @@ print(dictA)
 print("Type dictA: ", type(dictA))
 
 # Specify the path to JSON file containing dictionary A {wall1: grid1, wall2: grid2, wall3: grid2, wall4: grid3}
-file_path_dictB = r'insert file path here'
+file_path_dictB = r'C:\Users\jayes\Desktop\Revit Extensions\dictB.json'
 
 # Open the JSON file and load its contents into a dictionary
 with open(file_path_dictB, 'r') as file:
