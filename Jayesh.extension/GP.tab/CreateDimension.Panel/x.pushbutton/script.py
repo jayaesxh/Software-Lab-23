@@ -101,8 +101,8 @@ for wall_id, grid_id in dictA.items():
     print('Wall End Pt 1 (for Wall ID - {}): {}'.format(wall_id, wep1))
     print('*' * 50)
 
-    gep0 = Grid.Curve.GetEndPoint(0)
-    gep1 = Grid.Curve.GetEndPoint(1)
+    gep0 = grid.Curve.GetEndPoint(0)
+    gep1 = grid.Curve.GetEndPoint(1)
     print('Grid End Pt 0 (for Grid ID - {}): {}'.format(grid_id, gep0))
     print('Grid End Pt 1 (for Grid ID - {}): {}'.format(grid_id, gep1))
     print('*' * 50)
