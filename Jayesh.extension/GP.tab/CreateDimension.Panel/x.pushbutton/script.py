@@ -53,7 +53,7 @@ def create_new_dimension_along_line(document, line):
 # ====================================================================================================
 
 # Specify the path to JSON file containing dictionary A {wall1: grid1, wall2: grid2, wall3: grid2, wall4: grid3}
-file_path_dictA = r'C:\Users\jayes\Desktop\Revit Extensions\dictA.json'
+file_path_dictA = r'C:\Users\harsh\OneDrive\Documents\newew\dictA.json'
 
 # Open the JSON file and load its contents into a dictionary
 with open(file_path_dictA, 'r') as file:
@@ -63,7 +63,7 @@ print(dictA)
 print("Type dictA: ", type(dictA))
 
 # Specify the path to JSON file containing dictionary A {wall1: grid1, wall2: grid2, wall3: grid2, wall4: grid3}
-file_path_dictB = r'C:\Users\jayes\Desktop\Revit Extensions\dictB.json'
+file_path_dictB = r'C:\Users\harsh\OneDrive\Documents\newew\dictB.json'
 
 # Open the JSON file and load its contents into a dictionary
 with open(file_path_dictB, 'r') as file:
@@ -97,14 +97,14 @@ for wall_id, grid_id in dictA.items():
 
     wep0 = wall.Location.Curve.GetEndPoint(0)
     wep1 = wall.Location.Curve.GetEndPoint(1)
-    print('Wall End Pt 0 (for Wall ID - {}): {}'.format(wall_id, wep0))
-    print('Wall End Pt 1 (for Wall ID - {}): {}'.format(wall_id, wep1))
+    # print('Wall End Pt 0 (for Wall ID - {}): {}'.format(wall_id, wep0))
+    # print('Wall End Pt 1 (for Wall ID - {}): {}'.format(wall_id, wep1))
     print('*' * 50)
 
     gep0 = grid.Curve.GetEndPoint(0)
     gep1 = grid.Curve.GetEndPoint(1)
-    print('Grid End Pt 0 (for Grid ID - {}): {}'.format(grid_id, gep0))
-    print('Grid End Pt 1 (for Grid ID - {}): {}'.format(grid_id, gep1))
+    # print('Grid End Pt 0 (for Grid ID - {}): {}'.format(grid_id, gep0))
+    # print('Grid End Pt 1 (for Grid ID - {}): {}'.format(grid_id, gep1))
     print('*' * 50)
 
     # Check if the orientations match
