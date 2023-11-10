@@ -59,6 +59,13 @@ rvt_year = int(app.VersionNumber)
 # MAIN
 # ==================================================
 
+def convert_to_flat_dict(input_dict):
+    flat_dict = {}
+    for key, coordinates_list in input_dict.items():
+        for i, coordinates in enumerate(coordinates_list):
+            flat_dict['{}_{}'.format(key, i + 1)] = coordinates
+    return flat_dict
+
 
 def orientation(p, q, r):
     """
@@ -149,8 +156,10 @@ with open(file_path_dictA, 'r') as file:
 
 print(dictA)
 print("Type dictA: ", type(dictA))
+print("dictA: {}".format(';'.join(dictA)))
 
 wall_coordinates = []
+dictC = {}
 
 for wall_id, grid_id in dictA.items():
     # Get Wall and Grid elements based on their IDs
@@ -168,10 +177,35 @@ for wall_id, grid_id in dictA.items():
     print("Endpoint 1: ({}, {})".format(wep1[0], wep1[1]))
     print('*' * 50)
 
+    # Create dictC entries
+    dictC[wall_id] = [(round(wep0[0], 3), round(wep0[1], 3)), (round(wep1[0], 3), round(wep1[1], 3))]
+
 print(wall_coordinates)
 
-rounded_wall_coordinates = [(round(x, 2), round(y, 2)) for x, y in wall_coordinates]
+print(dictC)
+print("Type dictC: ", type(dictC))
+
+rounded_wall_coordinates = [(round(x, 3), round(y, 3)) for x, y in wall_coordinates]
 
 convex_hull = graham_scan(rounded_wall_coordinates)
 
 print("Convex Hull Vertices:", convex_hull)
+
+matching_wall_ids = []
+
+tolerance = 0.001
+
+for wall_id, coordinates_list in dictC.items():
+    for convex_vertex in convex_hull:
+        for coordinates in coordinates_list:
+            if all(abs(coord - convex_coord) < tolerance for coord, convex_coord in zip(coordinates, convex_vertex)):
+                matching_wall_ids.append(wall_id)
+
+# Remove duplicates by converting to a set and back to a list
+matching_wall_ids = list(set(matching_wall_ids))
+
+print("Wall IDs with Similar Coordinates to Convex Hull:", matching_wall_ids)
+
+
+print('*' * 50)
+print("Wall IDs with Similar Coordinates to Convex Hull: {}".format(';'.join(matching_wall_ids)))
