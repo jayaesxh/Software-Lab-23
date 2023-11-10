@@ -209,14 +209,17 @@ for element_id in all_walls:
 # print(wall_to_grid_mapping)
 # print('*' * 50)
 
-wall_to_grid_mapping_int = extract_element_ids_from_dict(wall_to_grid_mapping)
+dictA = extract_element_ids_from_dict(wall_to_grid_mapping)
 # print(wall_to_grid_mapping_int)
 
 # Export the dictionary to a JSON file
 # Ask the user for the file path
-directory_path = r'D:\Software Lab Data\Revit_Plug-ins\Anurag.extension\testplugin.tab\Create Dictionary.panel\Create Dictionary.pushbutton'
+directory_path = r'C:\Users\harsh\OneDrive\Documents\newew'
 
-file_name = 'output.json'
+file_name = 'dictA.json'
+
+# Convert both keys and values to strings in the dictionary
+dictA_str = {str(key): str(value) for key, value in dictA.items()}
 
 # Combining the directory path and file name to create the full file path
 file_path = os.path.join(directory_path, file_name)
@@ -226,4 +229,4 @@ if not file_path:
 
 else:
     with open(file_path, 'w') as json_file:
-        json.dump(wall_to_grid_mapping_int, json_file, indent=4)
+        json.dump(dictA_str, json_file, indent=4)
