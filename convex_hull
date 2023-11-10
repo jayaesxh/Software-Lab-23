@@ -1,0 +1,113 @@
+def orientation(p, q, r):
+    """
+    Function to find the orientation of triplet (p, q, r).
+    The function returns the following values:
+    0: Collinear points
+    1: Clockwise points
+    2: Counterclockwise
+    """
+    val = (q[1] - p[1]) * (r[0] - q[0]) - (q[0] - p[0]) * (r[1] - q[1])
+    if val == 0:
+        return 0  # Collinear
+    return 1 if val > 0 else 2  # Clockwise or Counterclockwise
+
+def atan2(y, x):
+    """
+    Function to calculate arctangent of y/x without using numpy.
+    """
+    if x > 0:
+        return arctan(y / x)
+    elif x < 0 and y >= 0:
+        return arctan(y / x) + pi
+    elif x < 0 and y < 0:
+        return arctan(y / x) - pi
+    elif x == 0 and y > 0:
+        return pi / 2
+    elif x == 0 and y < 0:
+        return -pi / 2
+    elif x == 0 and y == 0:
+        return 0
+
+def arctan(x):
+    """
+    Function to calculate arctangent without using numpy.
+    """
+    angle = 0
+    x_squared = x * x
+    divisor = 1
+    term = x / 1
+
+    while term != 0:
+        angle += term
+        divisor += 2
+        term *= -x_squared / divisor
+        divisor += 2
+        term /= divisor
+
+    return angle
+
+# Constants
+pi = 3.141592653589793
+
+def graham_scan(points):
+    """
+    Function to compute the convex hull of a set of points using the Graham's scan algorithm.
+    """
+    n = len(points)
+    if n < 3:
+        return "Convex hull not possible with less than 3 points."
+
+    # Find the point with the lowest y-coordinate (and leftmost if tied)
+    pivot = min(points, key=lambda point: (point[1], point[0]))
+
+    # Sort the points based on polar angle from the pivot
+    sorted_points = sorted(points, key=lambda point: (atan2(point[1] - pivot[1], point[0] - pivot[0]), point))
+
+    # Initialize the convex hull with the pivot and the first two sorted points
+    hull = [pivot, sorted_points[0], sorted_points[1]]
+
+    for i in range(2, n):
+        while len(hull) > 1 and orientation(hull[-2], hull[-1], sorted_points[i]) != 2:
+            hull.pop()
+        hull.append(sorted_points[i])
+
+    return hull
+
+# Example usage:
+points = [
+    (1, 1),
+    (2, 2),
+    (2, 0),
+    (3, 3),
+    (3, 1),
+    (3, 0),
+    (4, 2),
+    (5, 1),
+    (5, 0),
+    (6, 4),
+    (7, 2),
+    (7, 1),
+    (8, 3),
+    (8, 0),
+    (9, 5),
+    (9, 2),
+    (9, 0),
+    (10, 3),
+    (10, 1),
+    (11, 4),
+    (11, 2),
+    (12, 3),
+    (12, 1),
+    (13, 5),
+    (13, 2),
+    (13, 0),
+    (14, 3),
+    (14, 1),
+    (15, 4),
+    (15, 2),
+    (15, 0),
+]
+
+convex_hull = graham_scan(points)
+
+print("Convex Hull Vertices:", convex_hull)
