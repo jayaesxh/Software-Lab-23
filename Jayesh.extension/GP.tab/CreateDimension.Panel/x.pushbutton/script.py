@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-__title__ = "z"
-__author__ = "Jayesh"
+__title__ = "Create/Label Dimensions"
+__author__ = "Jayesh_Bhadva"
 __version__ = "Version 1.0"
 __doc__ = """ Description:  """
 
@@ -14,6 +14,7 @@ from pyrevit import revit, DB
 # .NET IMPORTS
 import clr
 import json
+import re
 
 clr.AddReference('System')
 from System.Collections.Generic import List
@@ -47,6 +48,18 @@ def create_new_dimension_along_line(document, line):
     return dimension
 
 
+def extract_element_ids(element_ids):
+    # Convert ElementId objects to string representation
+    element_ids_str = str(element_ids)
+
+    # Extract element IDs between square brackets using regular expression
+    extracted_ids = re.findall(r'\[([0-9]+)\]', element_ids_str)
+
+    # Convert the extracted strings to integers
+    element_ids_int = [int(id_str) for id_str in extracted_ids]
+
+    return element_ids_int
+
 # ╔╦╗╔═╗╦╔╗╔
 # ║║║╠═╣║║║║
 # ╩ ╩╩ ╩╩╝╚╝ MAIN
@@ -72,6 +85,8 @@ with open(file_path_dictB, 'r') as file:
 print(dictB)
 print("Type dictA: ", type(dictB))
 
+tol = app.ShortCurveTolerance
+
 # GRID SORTING
 v_grids = []
 h_grids = []
@@ -88,9 +103,42 @@ for wall_id, grid_id in dictA.items():
         grid_o = "H"
         h_grids.append(grid_id)
 
-# HORIZONTAL DIMENSIONS
+
+# MAKE dictA SEPARATE FOR HORIZONTAL AND VERTICAL WALLS/GRIDS
+
+dictA_hor_dim = {}
+dictA_ver_dim = {}
 
 for wall_id, grid_id in dictA.items():
+    wall = doc.GetElement(ElementId(int(wall_id)))
+    grid = doc.GetElement(ElementId(int(grid_id)))
+
+    # Check if the orientations match
+    if wall.Location.Curve.Direction.Y == -1 or wall.Location.Curve.Direction.Y == 1 and grid.Curve.Direction.Y == -1 or grid.Curve.Direction.Y == 1:
+        # For vertical grids
+        dictA_hor_dim[wall_id] = grid_id
+    elif wall.Location.Curve.Direction.Y != -1 or wall.Location.Curve.Direction.Y != 1 and grid.Curve.Direction.Y != -1 or grid.Curve.Direction.Y != 1:
+        # For horizontal grids
+        dictA_ver_dim[wall_id] = grid_id
+
+# Print horizontal dimension dictionary
+print("Following are Vertical Walls/Grids for Horizontal Dimensions:")
+print(";".join("{};{}".format(key, value) for key, value in dictA_hor_dim.items()))
+
+# Print vertical dimension dictionary
+print("Following are Horizontal Walls/Grids for Vertical Dimensions:")
+print(";".join("{};{}".format(key, value) for key, value in dictA_ver_dim.items()))
+
+
+dictC_hor_dim = {}  #key = wall_id & value = dim_id
+dictC_ver_dim = {}
+
+dictD_hor_dim = {}  #key = GP_id & value = dim_id
+dictD_ver_dim = {}
+
+# HORIZONTAL DIMENSIONS
+
+for wall_id, grid_id in dictA_hor_dim.items():
     # Get Wall and Grid elements based on their IDs
     wall = doc.GetElement(ElementId(int(wall_id)))
     grid = doc.GetElement(ElementId(int(grid_id)))
@@ -107,17 +155,9 @@ for wall_id, grid_id in dictA.items():
     # print('Grid End Pt 1 (for Grid ID - {}): {}'.format(grid_id, gep1))
     print('*' * 50)
 
-    # Check if the orientations match
-    if wall.Location.Curve.Direction.Y == -1 or wall.Location.Curve.Direction.Y == 1 and grid.Curve.Direction.Y == -1 or grid.Curve.Direction.Y == 1:
-        # Both are vertical grids
-        v_grids.append(grid_id)
-    elif wall.Location.Curve.Direction.Y != -1 or wall.Location.Curve.Direction.Y != 1 and grid.Curve.Direction.Y != -1 or grid.Curve.Direction.Y != 1:
-        # Both are horizontal grids
-        h_grids.append(grid_id)
-
     # Create dimensions between Wall and Grid
     start = XYZ(wep0[0], wep0[1] - 5, 0)
-    end = XYZ(gep1[0], wep0[1] - 5, 0)
+    end = XYZ((gep1[0] + 2 * tol), wep0[1] - 5, 0)
 
     # Calculate the difference between start and end
     difference = (end - start).GetLength()
@@ -134,38 +174,115 @@ for wall_id, grid_id in dictA.items():
     refArray.Append(Reference(grid))
 
     # CREATE NEW DIMENSION
-    doc.Create.NewDimension(active_view, lines, refArray)
+    dim = doc.Create.NewDimension(active_view, lines, refArray)
     t.Commit()
+
+    dim_id = dim.Id.IntegerValue
+
+    dictC_hor_dim[wall_id] = dim_id
+
     print("Created Horizontal Dimension Successfully between wall {} and grid {}.".format(wall_id, grid_id))
 else:
     print("No Horizontal Dimension Created between wall {} and grid {} due to tolerance.".format(wall_id, grid_id))
 
-# # VERTICAL DIMENSIONS
+print(dictC_hor_dim)
+print(";".join("{};{}".format(key, value) for key, value in dictC_hor_dim.items()))
 
-# for Wall, wall_tuple in wall_data.items():
-#     wep0, wep1 = wall_tuple
-#     for Grid, gep1 in grid_data.items():
-#         start = XYZ(wep0[0] - 5, wep0[1], 0)  # Vertical dimension starts from the wall's top endpoint
-#         end = XYZ(wep0[0] - 5, gep1[1], 0)  # Vertical dimension ends at the grid's Y-coordinate
+for wall_id_B, gp_id in dictB.items():
+    for wall_id_C, dim_id_wall in dictC_hor_dim.items():
+        # Compare keys from dictB and dictC_hor_dim
+        if wall_id_B == wall_id_C:
+            dictD_hor_dim[gp_id] = dim_id_wall
 
-#         # Calculate the difference between start and end
-#         difference = (end - start).GetLength()
+print(dictD_hor_dim)
+print(";".join("{};{}".format(key, value) for key, value in dictD_hor_dim.items()))
 
-#         # Check if the difference is greater than or equal to 0.01
-#         if difference >= 0.01:
-#             t = Transaction(doc, 'Create Vertical Dimension')
-#             t.Start()
+# LABEL HORIZONTAL DIMENSIONS
 
-#             lines = Line.CreateBound(start, end)
+for gp_id, dim_id in dictD_hor_dim.items():
+    t = Transaction(doc, 'Label Dimension')
+    t.Start()
 
-#             # CREATE REFERENCE ARRAY
-#             refArray = ReferenceArray()
-#             refArray.Append(Reference(Wall))
-#             refArray.Append(Reference(Grid))
+    print("Labelling Horizontal Dimension with GP {} on Dimension {}.".format(gp_id, dim_id))
 
-#             # CREATE NEW DIMENSION
-#             doc.Create.NewDimension(active_view, lines, refArray)
-#             t.Commit()
-#             print("Created Vertical Dimension Successfully between Wall and Grid.")
-#         else:
-#             print("No Vertical Dimension Created between Wall and Grid due to tolerance.")
+    gp = doc.GetElement(ElementId(int(gp_id)))  #GP_ID
+
+    label = gp.LabelDimension((ElementId(int(dim_id)))) #Dim_ID
+
+    t.Commit()
+    print("Labeled Horizontal Dimension Successfully")
+
+# VERTICAL DIMENSIONS
+
+for wall_id, grid_id in dictA_ver_dim.items():
+    # Get Wall and Grid elements based on their IDs
+    wall = doc.GetElement(ElementId(int(wall_id)))
+    grid = doc.GetElement(ElementId(int(grid_id)))
+
+    wep0 = wall.Location.Curve.GetEndPoint(0)
+    wep1 = wall.Location.Curve.GetEndPoint(1)
+    # print('Wall End Pt 0 (for Wall ID - {}): {}'.format(wall_id, wep0))
+    # print('Wall End Pt 1 (for Wall ID - {}): {}'.format(wall_id, wep1))
+    print('*' * 50)
+
+    gep0 = grid.Curve.GetEndPoint(0)
+    gep1 = grid.Curve.GetEndPoint(1)
+    # print('Grid End Pt 0 (for Grid ID - {}): {}'.format(grid_id, gep0))
+    # print('Grid End Pt 1 (for Grid ID - {}): {}'.format(grid_id, gep1))
+    print('*' * 50)
+
+    # Create dimensions between Wall and Grid
+    start = XYZ(wep0[0] - 5, wep0[1], 0)
+    end = XYZ(wep0[0], (gep0[1] + 2 * tol), 0)
+
+    # Calculate the difference between start and end
+    difference = (end - start).GetLength()
+    print("Difference between wall {} and grid {} is {}.".format(wall_id, grid_id, difference))
+
+    t = Transaction(doc, 'Create Dimension')
+    t.Start()
+
+    lines = Line.CreateBound(start, end)
+
+    # CREATE REFERENCE ARRAY
+    refArray = ReferenceArray()
+    refArray.Append(Reference(wall))
+    refArray.Append(Reference(grid))
+
+    # CREATE NEW DIMENSION
+    dim = doc.Create.NewDimension(active_view, lines, refArray)
+    t.Commit()
+    dim_id = dim.Id.IntegerValue
+
+    dictC_ver_dim[wall_id] = dim_id
+
+    print("Created Vertical Dimension Successfully between wall {} and grid {}.".format(wall_id, grid_id))
+else:
+    print("No Vertical Dimension Created between wall {} and grid {} due to tolerance.".format(wall_id, grid_id))
+
+print(dictC_ver_dim)
+print(";".join("{};{}".format(key, value) for key, value in dictC_ver_dim.items()))
+
+for wall_id_B, gp_id in dictB.items():
+    for wall_id_C, dim_id_wall in dictC_ver_dim.items():
+        # Compare keys from dictB and dictC_ver_dim
+        if wall_id_B == wall_id_C:
+            dictD_ver_dim[gp_id] = dim_id_wall
+
+print(dictD_ver_dim)
+print(";".join("{};{}".format(key, value) for key, value in dictD_ver_dim.items()))
+
+# LABEL VERTICAL DIMENSIONS
+
+for gp_id, dim_id in dictD_ver_dim.items():
+    t = Transaction(doc, 'Label Dimension')
+    t.Start()
+
+    print("Labelling Vertical Dimension with GP {} on Dimension {}.".format(gp_id, dim_id))
+
+    gp = doc.GetElement(ElementId(int(gp_id)))  #GP_ID
+
+    label = gp.LabelDimension((ElementId(int(dim_id)))) #Dim_ID
+
+    t.Commit()
+    print("Labeled Vertical Dimension Successfully")
