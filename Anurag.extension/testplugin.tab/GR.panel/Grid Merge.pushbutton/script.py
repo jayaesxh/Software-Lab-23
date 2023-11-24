@@ -101,13 +101,14 @@ vertical_grids = []
 horizontal_grids = []
 
 x_coordinates = []
+y_coordinates = []
 
 for element_id in all_grids:
     Grid = doc.GetElement(element_id)
     Grid_orientation = Grid.Curve.Direction.Y
     if Grid_orientation == 1 or Grid_orientation == -1:
         vertical_grids.append(element_id)
-    elif Grid_orientation == 1 and Grid_orientation != -1:
+    elif Grid_orientation != 1 and Grid_orientation != -1:
         horizontal_grids.append(element_id)
 
 
@@ -118,13 +119,20 @@ for element_id in vertical_grids:
     x_coordinates.append(grid_x)
 print(x_coordinates)
 
+# Get Y-coordinates of horizontal grids
+for element_id in horizontal_grids:
+    grid = doc.GetElement(element_id)
+    grid_y = grid.Curve.Origin.Y
+    y_coordinates.append(grid_y)
+print(y_coordinates)
+
 # Check if X-coordinates of two consecutive grids are almost the same
 for i in range(len(x_coordinates) - 1):
     current_x = x_coordinates[i]
     next_x = x_coordinates[i + 1]
 
     # Define a tolerance value for considering X-coordinates as almost the same
-    tolerance = 0.001  # You may adjust this value based on your requirements
+    tolerance = 0.01  # You may adjust this value based on your requirements
 
     # Check if the absolute difference between X-coordinates is within the tolerance
     if abs(next_x - current_x) < tolerance:
@@ -133,6 +141,52 @@ for i in range(len(x_coordinates) - 1):
         # Get the element IDs of the collinear grids
         start_point_id = vertical_grids[i]
         end_point_id = vertical_grids[i + 1]
+
+        # Get the grid elements from the element IDs
+        start_point = doc.GetElement(start_point_id)
+        end_point = doc.GetElement(end_point_id)
+
+        # Get the start and end points of the collinear grids
+        sp = start_point.Curve.GetEndPoint(0)
+        ep = end_point.Curve.GetEndPoint(1)
+
+        # Convert start and end points to XYZ objects
+        start = XYZ(sp.X, sp.Y, 0)
+        end = XYZ(ep.X, ep.Y, 0)
+
+        # Start a transaction to delete old grids and create a merged grid
+        t = Transaction(doc, 'Delete old Grid and create merged grid')
+        t.Start()
+
+        # Create a new line representing the merged grid
+        geom_line = Line.CreateBound(start, end)
+
+        # Create a new grid at the merged line
+        merged_grid = Grid.Create(doc, geom_line)
+
+        # Delete the old collinear grids
+        doc.Delete(start_point_id)
+        doc.Delete(end_point_id)
+
+        t.Commit()
+        print("Created Merged Grid Successfully")
+
+
+# Check if Y-coordinates of two consecutive grids are almost the same
+for i in range(len(y_coordinates) - 1):
+    current_y = y_coordinates[i]
+    next_y = y_coordinates[i + 1]
+
+    # Define a tolerance value for considering Y-coordinates as almost the same
+    tolerance = 0.01  # You may adjust this value based on your requirements
+
+    # Check if the absolute difference between X-coordinates is within the tolerance
+    if abs(next_y - current_y) < tolerance:
+        print('Grids {} and {} have almost the same Y-coordinate.'.format(i + 1, i + 2))
+
+        # Get the element IDs of the collinear grids
+        start_point_id = horizontal_grids[i]
+        end_point_id = horizontal_grids[i + 1]
 
         # Get the grid elements from the element IDs
         start_point = doc.GetElement(start_point_id)
