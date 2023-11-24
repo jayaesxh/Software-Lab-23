@@ -1,4 +1,5 @@
 layout:
-  - Grid Create
+  - Grid Create Walls
+  - Grid Create Columns
   - Grid Merge
   - Create Dictionary

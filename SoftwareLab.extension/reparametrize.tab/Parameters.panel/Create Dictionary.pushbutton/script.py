@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-__title__ = "Create Dictionary"
+__title__ = "Create Wall-Parameter Dictionary"
 __doc__ = """______"""
 
 # IMPORTS
