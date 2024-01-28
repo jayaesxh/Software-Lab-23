@@ -6,7 +6,7 @@ version: 2
 
 # Set the OS, Python version and other tools you might need
 build:
-  os: windows-10
+  os: nt
   tools:
     python: "3.12"
 
