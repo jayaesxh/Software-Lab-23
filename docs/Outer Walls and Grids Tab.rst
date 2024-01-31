@@ -6,7 +6,7 @@ This tab involves determination of outer walls and outer grids.
 Usage
 -----
 
-++Note: The following steps shall be proceeded after executing the steps from Dimensions Tab++
+**Note: The following steps shall be proceeded after executing the steps from Dimensions Tab**
 
 1. Click the ``Get Boundary Walls`` button.
 2. This button identifies the boundary walls in a revit model.
