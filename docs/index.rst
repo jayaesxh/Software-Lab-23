@@ -9,6 +9,8 @@ Welcome to Model Re-Parametrizing's documentation!
 .. toctree::
    :maxdepth: 2
    
+   Getting Started
+
    Grids - Grid Create Walls
    Grids - Grid Create Columns
    Grids - Grid Merge
