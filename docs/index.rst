@@ -18,10 +18,3 @@ Welcome to Model Re-Parametrizing's documentation!
    Dimensions Tab
 
    Outer Walls and Grids Tab
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
