@@ -6,7 +6,7 @@ This tab involves creation of labelled dimensions between building elements and 
 Usage
 -----
 
-++Note: The following steps shall be proceeded after executing the steps from Parameters Tab++
+**Note: The following steps shall be proceeded after executing the steps from Parameters Tab**
 
 1. Click the ``Create/Label Dimension`` button.
 2. This button creates labelled dimension between building elements and grids. By clicking on the label of dimension, the user can control the distance of building element from the grid.
