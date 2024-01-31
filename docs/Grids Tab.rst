@@ -1,7 +1,7 @@
 Grids Tab
 =================
 
-This tool creates grids based on walls/columns in the Revit model and also allows merging of collinear grids.
+This tab involves creation of grids based on walls/columns in the Revit model and also allows merging of collinear grids.
 
 Usage
 -----
