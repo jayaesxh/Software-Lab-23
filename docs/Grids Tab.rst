@@ -1,7 +1,7 @@
 Grids Tab
 =================
 
-This tool creates grids based on the orientation of walls in the Revit model.
+This tool creates grids based on walls/columns in the Revit model and also allows merging of collinear grids.
 
 Usage
 -----
@@ -18,6 +18,7 @@ Usage
 
 Create Wall-Grids
 -----------------
+The following is the python script for ``Create Wall-Grids`` button
 
 .. code-block:: python
 
@@ -119,6 +120,7 @@ Create Wall-Grids
 
 Create Column-Grids
 --------------------
+The following is the python script for ``Create Column-Grids`` button
 
 .. code-block:: python
 
@@ -194,6 +196,7 @@ Create Column-Grids
 
 Grids Merge
 -----------------
+The following is the python script for ``Grids Merge`` button
 
 .. code-block:: python
 
@@ -399,6 +402,7 @@ Grids Merge
 
 Create Wall-Grid Dictionary
 ---------------------------
+The following is the python script for ``Create Wall-Grid Dictionary`` button
 
 .. code-block:: python
 
