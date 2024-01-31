@@ -6,7 +6,7 @@ This tab involves creation of Global Parameters which will contain the distance 
 Usage
 -----
 
-++Note: The following steps shall be proceeded after executing the steps from Grids Tab++
+**Note: The following steps shall be proceeded after executing the steps from Grids Tab**
 
 1. Click the ``Create Parameter`` button.
 2. This button creates global parameter whose values are the distance between building element and grid and associates the parameter with the building element
