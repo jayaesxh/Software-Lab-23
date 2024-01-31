@@ -19,7 +19,7 @@
 
 project = 'Model Re-Parametrizing'
 copyright = '2024, AHJ'
-author = 'AHJ'
+author = 'Anurag, Harshal, Jayesh'
 
 
 # -- General configuration ---------------------------------------------------
