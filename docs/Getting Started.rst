@@ -4,8 +4,6 @@ Getting Started
 Model Re-Parametrizing is a Revit extension written in Python that can help you 
 to automate parameter creation in turn making models flexible to explore alternate design possibilities.
 
-Check out the `developer guide <revitron.html>`_ for more information or 
-use the `cheat sheet <cheat-sheet.html>`_ to get started quickly.
 
 Installation
 ------------
