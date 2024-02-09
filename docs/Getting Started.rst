@@ -40,6 +40,6 @@ Transactions (t) are used to manage the creation of grids, ensuring that changes
 The script creates grids using the Grid.Create method based on the start and end points of the walls.
 
 .. image:: images/Bild1.png
- :width: 600
+ :width: 400
 
 The following is the python script for ``Create Wall-Grids`` button
