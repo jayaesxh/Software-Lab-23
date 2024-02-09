@@ -41,4 +41,10 @@ The script creates grids using the Grid.Create method based on the start and end
 
 .. image:: images/Bild1.png
 
+.. image:: images/Bild2.png
+
+.. image:: images/Bild3.png
+
+.. image:: images/Bild4.png
+
 The following is the python script for ``Create Wall-Grids`` button
