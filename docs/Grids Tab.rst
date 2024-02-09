@@ -284,6 +284,8 @@ You can adjust the tolerance value based on your requirements to determine when 
 7. Transaction Management:
 Transactions are used to manage the creation of merged grids and the deletion of old collinear grids.
 
+This can be observed in the below image, where the grids in blue colour represent the collinear grids, which later on get merged.
+
 .. image:: images/Bild2.png
 
 The following is the python script for ``Grids Merge`` button
@@ -493,7 +495,7 @@ The following is the python script for ``Grids Merge`` button
 Create Wall-Grid Dictionary
 ---------------------------
 
-*Objective: This script automates the process of creating a dictionary that maps each wall to its closest grid in Revit.
+*Objective:* This script automates the process of creating a dictionary that maps each wall to its closest grid in Revit.
 
 *Script Anatomy:*
 
