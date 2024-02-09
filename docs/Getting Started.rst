@@ -14,8 +14,3 @@ download the extension `zip <https://github.com/jayaesxh/Software-Lab-23>`_
 click on *pyRevit* > *Extensions* to open the extensions manager and 
 follow `these <https://www.notion.so/Install-Extensions-0753ab78c0ce46149f962acc50892491>`_ instructions.
 
-TEST
-------------
-.. container:: .image-mockup
-
-    .. image:: https://github.com/jayaesxh/Software-Lab-23/blob/main/docs/images/Bild1.png
