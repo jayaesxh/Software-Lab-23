@@ -261,6 +261,29 @@ Grids Merge
 
 *Script Anatomy:*
 
+1. Filtered Element Collectors:
+The script uses ``FilteredElementCollector`` to retrieve all walls and grids in the Revit model.
+
+2. Grouping Grids:
+The script separates grids into two lists: ``vertical_grids`` and ``horizontal_grids`` based on their orientation.
+
+3. Get X and Y Coordinates:
+X and Y coordinates of the grids are extracted and stored in ``x_coordinates`` and ``y_coordinates`` lists, respectively.
+
+4. Merging Vertical Grids:
+It checks if X-coordinates of two consecutive vertical grids are almost the same.
+If so, it creates a merged grid using the start and end points of the collinear grids, and deletes the old grids.
+
+5. Merging Horizontal Grids:
+Similar to vertical grids, it checks if Y-coordinates of two consecutive horizontal grids are almost the same.
+If so, it creates a merged grid using the start and end points of the collinear grids, and deletes the old grids.
+
+6. Tolerance Adjustment:
+You can adjust the tolerance value based on your requirements to determine when X or Y coordinates are considered almost the same.
+
+7. Transaction Management:
+Transactions are used to manage the creation of merged grids and the deletion of old collinear grids.
+
 .. image:: images/Bild2.png
 
 The following is the python script for ``Grids Merge`` button
@@ -469,6 +492,32 @@ The following is the python script for ``Grids Merge`` button
 
 Create Wall-Grid Dictionary
 ---------------------------
+
+*Objective: This script automates the process of creating a dictionary that maps each wall to its closest grid in Revit.
+
+*Script Anatomy:*
+
+1. Filtered Element Collectors:
+The script uses ``FilteredElementCollector`` to retrieve all walls and grids in the Revit model.
+
+2. Grouping Grids:
+The script separates grids into two lists: ``v_grids`` for vertical grids and ``h_grids`` for horizontal grids based on their orientation.
+
+3. Conversion Functions:
+``feet_to_mm``: Converts feet to millimeters.
+``calculate_distance``: Calculates the distance between two points.
+
+4. Extraction Function:
+``extract_element_ids_from_dict``: Extracts element IDs from a dictionary by converting keys and values to strings and using regular expressions to extract numeric values.
+
+5. Main Logic:
+The script creates a dictionary ``wall_to_grid_mapping`` to map each wall to its closest grid.
+It iterates through all walls and finds the closest grid (either vertical or horizontal) based on the distance calculation.
+The result is a mapping of wall element IDs to their corresponding closest grid element IDs.
+
+6. Export to JSON:
+The script converts the resulting dictionary into a JSON-friendly format and exports it to a JSON file (dictA.json) at a specified directory.
+
 The following is the python script for ``Create Wall-Grid Dictionary`` button
 
 .. code-block:: python
