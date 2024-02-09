@@ -19,15 +19,15 @@ Usage
 Create Wall-Grids
 -----------------
 
-*Objective:*
+*Objective: This script automates the creation of grids in Revit based on wall orientation.*
 
-*Script Anatomy*
+*Script Anatomy:*
 
 1. Filtered Element Collectors:
-The script uses FilteredElementCollector to retrieve all walls, grids, and structural columns in the Revit model.
+The script uses ``FilteredElementCollector`` to retrieve all walls, grids, and structural columns in the Revit model.
 
 2. Wall Orientation:
-Walls are categorized into vertical (v_walls) and horizontal (h_walls) based on their orientation.
+Walls are categorized into vertical (``v_walls``) and horizontal (``h_walls``) based on their orientation.
 
 3. Create Grids for Vertical Walls:
 For each vertical wall, the script checks its length and creates a grid if the length exceeds a specified tolerance.
@@ -36,10 +36,10 @@ For each vertical wall, the script checks its length and creates a grid if the l
 Similar to vertical walls, the script checks the length of each horizontal wall and creates a grid if the length is above the tolerance.
 
 5. Transaction Management:
-Transactions (t) are used to manage the creation of grids, ensuring that changes are committed to the Revit model.
+Transactions (``t``) are used to manage the creation of grids, ensuring that changes are committed to the Revit model.
 
 6. Grid Creation:
-The script creates grids using the Grid.Create method based on the start and end points of the walls.
+The script creates grids using the ``Grid.Create`` method based on the start and end points of the walls.
 
 The following can be observed in the image below, where input model is on the left, and output of grids along the wall on the right
 
@@ -148,6 +148,38 @@ The following is the python script for ``Create Wall-Grids`` button
 
 Create Column-Grids
 --------------------
+
+*Objective: This script automates the generation of grid lines in Revit, aligning with the positions of structural columns.*
+
+*Script Anatomy:*
+
+1. Filtered Element Collectors:
+The script uses ``FilteredElementCollector`` to retrieve all walls, grids, and structural columns in the Revit model.
+
+2. Initialize Lists for Grid Lines:
+Two lists (``vertical_lines`` and ``horizontal_lines``) are initialized to store the start and end points of vertical and horizontal grid lines, respectively.
+
+3. Define Grid Length:
+The variable ``grid_length`` is set to determine the length of the vertical and horizontal grid lines.
+
+4. Iterate Through Columns:
+The script iterates through each structural column to determine its location (``column_location``) and coordinates (``column_x``, ``column_y``).
+
+5. Create Vertical and Horizontal Lines:
+Vertical and horizontal lines are created based on the column location and the specified grid length.
+
+6. Transaction Management:
+A transaction (``t``) is started to manage the creation of grids, ensuring that changes are committed to the Revit model.
+
+7. Create Vertical Grids:
+The script creates vertical grids using the ``Grid.Create`` method and the start and end points of the vertical lines.
+
+8. Create Horizontal Grids:
+Similar to vertical grids, the script creates horizontal grids using the start and end points of the horizontal lines.
+
+9. Commit the Transaction:
+The transaction is committed to apply the changes to the Revit model.
+
 The following is the python script for ``Create Column-Grids`` button
 
 .. code-block:: python
@@ -224,6 +256,13 @@ The following is the python script for ``Create Column-Grids`` button
 
 Grids Merge
 -----------------
+
+*Objective:* This script automates the process of identifying and merging collinear grids in Revit, improving the organization of the building grid layout.
+
+*Script Anatomy:*
+
+.. image:: images/Bild2.png
+
 The following is the python script for ``Grids Merge`` button
 
 .. code-block:: python
