@@ -305,6 +305,9 @@ Similarly, dimensions are created between horizontal walls and the lower outer g
 
 It maps the dimensions to global parameters and labels them accordingly.
 
+
+The following screenshot depicts created labelled dimensions with respect to outer grids.
+
 .. image:: images/Bild4.png
 
 The following is the python script for ``Create Dimensions based on Outer Grids`` button
