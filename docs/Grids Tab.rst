@@ -19,7 +19,7 @@ Usage
 Create Wall-Grids
 -----------------
 
-*Objective: This script automates the creation of grids in Revit based on wall orientation.*
+*Objective:* This script automates the creation of grids in Revit based on wall orientation.
 
 *Script Anatomy:*
 
