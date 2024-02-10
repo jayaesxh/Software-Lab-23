@@ -21,11 +21,11 @@ Usage
 
 1. Functions Section:
 
-``feet_to_mm (feet) ``: Converts feet to millimeters.
+``feet_to_mm (feet)``: Converts feet to millimeters.
 
-``create_new_dimension_along_line (document, line) ``: Creates a new dimension along a given line.
+``create_new_dimension_along_line (document, line)``: Creates a new dimension along a given line.
 
-``extract_element_ids (element_ids) ``: Extracts element IDs from a list.
+``extract_element_ids (element_ids)``: Extracts element IDs from a list.
 
  
 
