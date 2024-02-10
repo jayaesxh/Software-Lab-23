@@ -15,6 +15,38 @@ Usage
 
 Create Parameter
 -----------------
+
+*Objective:* This script automates the creation of global parameters in Revit based such that the value of these parameters shall be the distances between Wall and Grid which were mapped while creating Wall-Grid Dictionary.
+
+*Script Anatomy:*
+
+1. Conversion Functions:
+``feet_to_mm``: Converts feet to millimeters.
+``calculate_distance``: Calculates the distance between two points.
+``find_minimum_value``: Finds the minimum value in a list.
+``extract_element_ids``: Extracts element IDs from a list.
+``extract_element_ids_from_dict``: Extracts element IDs from a dictionary.
+``create_new_global_parameter``: Creates a new global parameter in Revit.
+``mm_to_feet``: Converts millimeters to feet.
+
+2. Main Logic:
+The script calculates the distance between walls and grids, stores the information in dictionaries, and creates global parameters with the calculated values.
+
+3. JSON Handling:
+It reads a JSON file containing a dictionary mapping walls to grids (``dictA``).
+
+4. Distance Calculation:
+It calculates the distance between each wall and its corresponding grid based on their coordinates and orientation.
+
+5. Global Parameter Creation:
+It creates global parameters with names like ``Wall-Grid_Distance_(Wall_EID_{})`` and values representing the calculated distances.
+
+
+The following screenshot shows the list of generated global parameters.
+
+.. image:: images/Bild3.png
+
+
 The following is the python script for ``Create Parameter`` button
 
 .. code-block:: python
@@ -201,6 +233,29 @@ The following is the python script for ``Create Parameter`` button
 
 Create Wall-Parameter Dictionary
 --------------------------------
+
+*Objective:* This script automates the creation of global parameters in Revit based such that the value of these parameters shall be the distances between Wall and Grid which were mapped while creating Wall-Grid Dictionary.
+
+*Script Anatomy:*
+
+1. JSON Data Loading: 
+It loads a previously created JSON file (``dictA``) containing a dictionary that maps walls to their associated grids.
+
+2. Extracting Global Parameter IDs: 
+The script extracts the IDs of all existing global parameters in the document.
+
+3. Dictionary Initialization: 
+An empty dictionary (``dictB``) is initialized to store the map-ping between wall Element IDs and global parameter IDs.
+
+4. Dictionary Population: 
+The script iterates through the wall Element IDs and corre-sponding global parameter IDs, populating dictB.
+
+5. Type Conversion: 
+Both keys and values in ``dictB`` are converted to strings.
+
+6. JSON File Creation: 
+The final dictionary (``dictB_str``) is written to a new JSON file (dictB.json).
+
 The following is the python script for ``Create Wall-Parameter Dictionary`` button
 
 .. code-block:: python
