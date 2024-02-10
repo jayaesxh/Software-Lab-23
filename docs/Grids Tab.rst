@@ -77,7 +77,6 @@ The following is the python script for ``Create Wall-Grids`` button
     # Get walls, grids, and columns
     all_walls = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Walls).WhereElementIsNotElementType().ToElementIds()
     all_grids = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Grids).WhereElementIsNotElementType().ToElementIds()
-    all_columns = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_StructuralColumns).WhereElementIsNotElementType().ToElements()
 
     # Wall Orientation
 
@@ -92,9 +91,9 @@ The following is the python script for ``Create Wall-Grids`` button
         Wall_orientation = abs(Wall.Location.Curve.Direction.Y)
 
         # Check orientation and categorize walls
-        if Wall_orientation == 1:
+        if Wall_orientation == 1:          # Vertical walls have orientation Y = 1
             v_walls.append(element_id)
-        elif Wall_orientation != 1:
+        elif Wall_orientation != 1:        # Horizontal walls have orientation Y != 1  
             h_walls.append(element_id)
 
     # Create Grids for Vertical Walls
