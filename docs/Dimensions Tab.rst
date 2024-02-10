@@ -13,6 +13,62 @@ Usage
 3. Click the ``Create Dimensions based on Outer Grids`` button.
 4. This button creates labelled dimension between building elements and outer grids. By clicking on the label of dimension, the user can control the distance of building element from the outer grid.
 
+*Objective:* This script creates and labels dimensions in Revit based on predefined dictionaries (dictA, dictB) and associates them with global parameters.
+
+ 
+
+*Script Anatomy:*
+
+1. Functions Section:
+
+``feet_to_mm (feet) ``: Converts feet to millimeters.
+
+``create_new_dimension_along_line (document, line) ``: Creates a new dimension along a given line.
+
+``extract_element_ids (element_ids) ``: Extracts element IDs from a list.
+
+ 
+
+2. Dictionary Loading:
+
+It loads two dictionaries from JSON files - ``dictA`` (mapping walls to grids) and ``dictB`` (mapping walls to global parameters).
+
+ 
+
+3. Grid Sorting:
+
+The script separates vertical and horizontal grids based on their orientations.
+
+ 
+
+4. Dictionary A Separation:
+
+It further separates ``dictA`` into dictionaries for horizontal and vertical walls/grids (``dictA_hor_dim`` and ``dictA_ver_dim``).
+
+ 
+
+5. Horizontal Dimensions Creation:
+
+The script creates horizontal dimensions between walls and grids, storing the resulting dimension IDs in ``dictC_hor_dim``.
+
+ 
+
+6. Mapping to Global Parameters:
+
+It maps global parameters from ``dictB`` to horizontal dimensions, storing the associations in ``dictD_hor_dim``.
+
+ 
+
+7. Labeling Horizontal Dimensions:
+
+The script labels horizontal dimensions with corresponding global parameters.
+
+ 
+
+8. Vertical Dimensions Creation:
+
+Similarly, vertical dimensions are created, mapped to global parameters, and labeled.
+
 Create/Label Dimension
 ----------------------
 The following is the python script for ``Create/Label Dimension`` button
@@ -200,7 +256,56 @@ The following is the python script for ``Create/Label Dimension`` button
         t.Commit()
 
 Create Dimensions based on Outer Grids
---------------------------------
+--------------------------------------
+
+*Objective:* The script automates the creation of dimensions between walls and outer grids in Revit, subsequently associating these dimensions with global parameters.
+
+ 
+
+*Script Anatomy:*
+
+
+1. Filtered Element Collectors:
+
+The script uses filtered element collectors to gather information about walls and grids in the Revit document.
+
+ 
+
+2. Grid Sorting:
+
+It sorts grids into vertical and horizontal based on their orientations.
+
+ 
+
+3. Outer Grid Identification:
+
+The script identifies the left, right, upper, and lower outer grids by finding the minimum and maximum coordinates.
+
+ 
+
+4. Wall Sorting:
+
+It sorts walls into vertical and horizontal based on their orientations.
+
+ 
+
+5. Dimension Creation - Vertical Walls to Left Grid:
+
+The script creates dimensions between vertical walls and the left outer grid.
+
+ 
+
+6. Dimension Creation - Horizontal Walls to Lower Grid:
+
+Similarly, dimensions are created between horizontal walls and the lower outer grid.
+
+ 
+
+7. Global Parameter Mapping:
+
+It maps the dimensions to global parameters and labels them accordingly.
+
+
 The following is the python script for ``Create Dimensions based on Outer Grids`` button
 
 .. code-block:: python
