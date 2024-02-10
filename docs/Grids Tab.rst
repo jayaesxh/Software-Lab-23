@@ -506,10 +506,13 @@ The script uses ``FilteredElementCollector`` to retrieve all walls and grids in 
 The script separates grids into two lists: ``v_grids`` for vertical grids and ``h_grids`` for horizontal grids based on their orientation.
 
 3. Conversion Functions:
+
 ``feet_to_mm``: Converts feet to millimeters.
+
 ``calculate_distance``: Calculates the distance between two points.
 
 4. Extraction Function:
+
 ``extract_element_ids_from_dict``: Extracts element IDs from a dictionary by converting keys and values to strings and using regular expressions to extract numeric values.
 
 5. Main Logic:
