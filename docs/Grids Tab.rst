@@ -24,7 +24,7 @@ Create Wall-Grids
 *Script Anatomy:*
 
 1. Filtered Element Collectors:
-The script uses ``FilteredElementCollector`` to retrieve all walls, grids, and structural columns in the Revit model.
+The script uses ``FilteredElementCollector`` to retrieve all walls in the Revit model.
 
 2. Wall Orientation:
 Walls are categorized into vertical (``v_walls``) and horizontal (``h_walls``) based on their orientation.
@@ -74,9 +74,8 @@ The following is the python script for ``Create Wall-Grids`` button
 
     # Creating grids using wall reference and setting up the particular grid length
 
-    # Get walls, grids, and columns
+    # Get walls
     all_walls = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Walls).WhereElementIsNotElementType().ToElementIds()
-    all_grids = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Grids).WhereElementIsNotElementType().ToElementIds()
 
     # Wall Orientation
 
@@ -148,12 +147,12 @@ The following is the python script for ``Create Wall-Grids`` button
 Create Column-Grids
 --------------------
 
-*Objective: This script automates the generation of grid lines in Revit, aligning with the positions of structural columns.*
+*Objective:* This script automates the generation of grid lines in Revit, aligning with the positions of structural columns.
 
 *Script Anatomy:*
 
 1. Filtered Element Collectors:
-The script uses ``FilteredElementCollector`` to retrieve all walls, grids, and structural columns in the Revit model.
+The script uses ``FilteredElementCollector`` to retrieve all structural columns in the Revit model.
 
 2. Initialize Lists for Grid Lines:
 Two lists (``vertical_lines`` and ``horizontal_lines``) are initialized to store the start and end points of vertical and horizontal grid lines, respectively.
@@ -205,9 +204,7 @@ The following is the python script for ``Create Column-Grids`` button
 
     # Filtered Element Collectors
 
-    # Get all walls, grids, and columns
-    all_walls = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Walls).WhereElementIsNotElementType().ToElementIds()
-    all_grids = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Grids).WhereElementIsNotElementType().ToElementIds()
+    # Get all columns
     all_columns = FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_StructuralColumns).WhereElementIsNotElementType().ToElements()
 
     # Initialize lists for vertical and horizontal grid lines
