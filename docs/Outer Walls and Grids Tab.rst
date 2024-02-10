@@ -15,6 +15,23 @@ Usage
 
 Get Boundary Walls
 -------------------
+
+*Objective:* Identify the boundary walls in a Revit model.
+
+*Script Anatomy:*
+
+1. Collect Wall Coordinates: The script collects the coordinates of walls from the previously created dictA dictionary.
+
+2. Compute Convex Hull: Using the Graham's scan algorithm, the script computes the convex hull of the wall coordinates.
+
+3. Identify Matching Wall IDs: It identifies the wall IDs with coordinates similar to the convex hull within a specified tolerance.
+
+4. Print Result: The script prints the matching wall IDs.
+
+The following image depicts the process of identifying boundary walls
+
+.. image:: images/Bild5.png
+
 The following is the python script for ``Get Boundary Walls`` button
 
 .. code-block:: python
@@ -132,6 +149,20 @@ The following is the python script for ``Get Boundary Walls`` button
 
 Get Outline Grids
 -----------------
+
+*Objective:* Identify the outline grids in a Revit model.
+
+*Script Anatomy:*
+
+1. Collect Grid Coordinates: The script collects the coordinates of grids from the dictA dictionary.
+
+2. Compute Convex Hull: Similar to the boundary walls script, it computes the convex hull of the grid coordinates using Graham's scan.
+
+3. Identify Matching Grid IDs: It identifies the grid IDs with coordinates similar to the convex hull within a specified tolerance.
+
+4. Print Result: The script prints the matching grid IDs.
+
+
 The following is the python script for ``Get Outline Grids`` button
 
 .. code-block:: python
