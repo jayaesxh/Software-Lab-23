@@ -13,6 +13,15 @@ Usage
 3. Click the ``Get Outline Grids`` button.
 4. This button identifies the outline grids in a revit model.
 
+Key Functions used:
+
+•	``convert_to_flat_dict(input_dict)``: Flattens a nested dictionary.
+•	``orientation(p, q, r)``: Determines the orientation of three points (clockwise, counterclockwise, or collinear).
+•	``atan2(y, x)``: Calculates the arctangent of y/x without using numpy.
+•	``arctan(x)``: Calculates arctangent without using numpy.
+•	``graham_scan(points)``: Computes the convex hull of a set of points using the Graham's scan algorithm.
+
+
 Get Boundary Walls
 -------------------
 
