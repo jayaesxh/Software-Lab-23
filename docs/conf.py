@@ -19,7 +19,7 @@
 
 project = 'Model Re-Parametrizing'
 copyright = '2024, AHJ'
-author = 'Anurag Kumar Sarswatula, Harshal Gunjal, Jayesh Adlinge'
+author = 'A. Sarswatula, H. Gunjal, J. Adlinge'
 
 
 # -- General configuration ---------------------------------------------------
