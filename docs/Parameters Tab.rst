@@ -21,12 +21,19 @@ Create Parameter
 *Script Anatomy:*
 
 1. Conversion Functions:
+
 ``feet_to_mm``: Converts feet to millimeters.
+
 ``calculate_distance``: Calculates the distance between two points.
+
 ``find_minimum_value``: Finds the minimum value in a list.
+
 ``extract_element_ids``: Extracts element IDs from a list.
+
 ``extract_element_ids_from_dict``: Extracts element IDs from a dictionary.
+
 ``create_new_global_parameter``: Creates a new global parameter in Revit.
+
 ``mm_to_feet``: Converts millimeters to feet.
 
 2. Main Logic:
